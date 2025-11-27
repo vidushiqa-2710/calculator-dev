@@ -23,25 +23,27 @@ jobs:
         npm install
         npm run test:unit
 
-  # This job depends on unit_test passing and calls the E2E repository's reusable workflow.
-  e2e_test_trigger:
+  # New Job 2: This job runs ONLY the checkout, preparing the files for the E2E runner.
+  e2e_checkout:
     needs: unit_test
-    # Ensures this job only runs if the unit tests passed
     if: success()
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout Application Code (for Playwright to access index.html)
-      uses: actions/checkout@v3
-
-    # CRITICAL: This step calls the 'playwright-e2e' repository
-    # The 'uses' path must be in the format: <Owner>/<RepoName>/<PathToFile>@<Branch>
-    - name: Run E2E Tests from Automation Repository
-      uses: vidushiqa-2710/playwright-e2e/.github/workflows/run_tests.yml@main 
-      # This line requires the action to be called from the same repo.
-      # To call an external repo, you must use the following format:
-      # uses: YOUR_GITHUB_USERNAME/playwright-e2e/.github/workflows/run_tests.yml@main 
-      # You also need to grant the GITHUB_TOKEN permissions:
-      # permissions:
-      #   contents: read
-      #   actions: write # Required to dispatch a workflow
+      - name: Checkout Application Code (for Playwright to access index.html)
+        # This checks out the files into the workspace that the next job will use.
+        uses: actions/checkout@v3
+        
+  # New Job 3: This job is dedicated SOLELY to calling the reusable workflow.
+  e2e_trigger_runner:
+    needs: e2e_checkout # This job waits for the checkout job to finish
+    if: success()
+    
+    # CRITICAL: When using `uses:` here, the job structure changes.
+    # We remove 'runs-on' and all 'steps'.
+    permissions:
+      contents: read
+      actions: write
+      
+    # This is the correct, top-level way to call a reusable workflow (no 'steps' block)
+    uses: vidushiqa-2710/playwright-e2e/.github/workflows/run_tests.yml@main
