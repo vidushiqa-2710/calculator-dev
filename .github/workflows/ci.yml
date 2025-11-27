@@ -45,4 +45,3 @@ jobs:
       # permissions:
       #   contents: read
       #   actions: write # Required to dispatch a workflow
-      run: echo "Initiating E2E tests from external repository..."
