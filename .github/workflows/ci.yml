@@ -37,7 +37,8 @@ jobs:
     # CRITICAL: This step calls the 'playwright-e2e' repository
     # The 'uses' path must be in the format: <Owner>/<RepoName>/<PathToFile>@<Branch>
     - name: Run E2E Tests from Automation Repository
-      uses: ./playwright-e2e/.github/workflows/run_tests.yml@main # This line requires the action to be called from the same repo.
+      uses: vidushiqa-2710/playwright-e2e/.github/workflows/run_tests.yml@main 
+      # This line requires the action to be called from the same repo.
       # To call an external repo, you must use the following format:
       # uses: YOUR_GITHUB_USERNAME/playwright-e2e/.github/workflows/run_tests.yml@main 
       # You also need to grant the GITHUB_TOKEN permissions:
