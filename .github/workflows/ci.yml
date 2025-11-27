@@ -46,4 +46,4 @@ jobs:
       actions: write
       
     # This is the correct, top-level way to call a reusable workflow (no 'steps' block)
-    uses: ./github.com/vidushiqa-2710/playwright-e2e/.github/workflows/run_tests.yml@main
+    uses: vidushiqa-2710/playwright-e2e/.github/workflows/run_tests.yml@main
