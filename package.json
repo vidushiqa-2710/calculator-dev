@@ -1,0 +1,12 @@
+{
+  "name": "calculator-dev",
+  "version": "1.0.0",
+  "description": "Application repository containing business logic and unit tests.",
+  "main": "src/calculator.js",
+  "scripts": {
+    "test:unit": "jest"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

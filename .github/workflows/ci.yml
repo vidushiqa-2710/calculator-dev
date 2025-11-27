@@ -1,0 +1,47 @@
+name: App Build, Unit Test, & E2E Trigger
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  unit_test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Application Code
+      uses: actions/checkout@v3
+      
+    - name: Set up Node.js 18.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+        
+    - name: Install Dependencies & Run Jest Unit Tests
+      run: |
+        npm install
+        npm run test:unit
+
+  # This job depends on unit_test passing and calls the E2E repository's reusable workflow.
+  e2e_test_trigger:
+    needs: unit_test
+    # Ensures this job only runs if the unit tests passed
+    if: success()
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Application Code (for Playwright to access index.html)
+      uses: actions/checkout@v3
+
+    # CRITICAL: This step calls the 'playwright-e2e' repository
+    # The 'uses' path must be in the format: <Owner>/<RepoName>/<PathToFile>@<Branch>
+    - name: Run E2E Tests from Automation Repository
+      uses: ./playwright-e2e/.github/workflows/run_tests.yml@main # This line requires the action to be called from the same repo.
+      # To call an external repo, you must use the following format:
+      # uses: YOUR_GITHUB_USERNAME/playwright-e2e/.github/workflows/run_tests.yml@main 
+      # You also need to grant the GITHUB_TOKEN permissions:
+      # permissions:
+      #   contents: read
+      #   actions: write # Required to dispatch a workflow
+      run: echo "Initiating E2E tests from external repository..."
